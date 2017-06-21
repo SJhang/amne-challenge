@@ -1,11 +1,12 @@
 window.onload = () => {
   const inputFile = document.querySelector('.fileInput');
   const resultsDisplay = document.querySelector('.results');
-  const resultPanel = document.querySelector('.panel-default');
+  const resultPanel = resultsDisplay.parentNode;
 
   inputFile.addEventListener('change', e => {
     const file = inputFile.files[0];
     const fileTypeRegex = /text.*/;
+    resultPanel.classList.value = 'panel panel-default';
 
     if (file.type.match(fileTypeRegex)) {
       // FileReader over XMLHttpRequest to create a virtual file
@@ -33,17 +34,23 @@ window.onload = () => {
         const fixedWindows = secondLine.split(' ');
 
         if (daysOfHomeSalePrice <= 20000 && fixedWindowSize <= daysOfHomeSalePrice) {
+          resultPanel.classList.remove('panel-default');
+          resultPanel.classList.add('panel-success');
+
           fixedWindows.forEach(item => {
             resultsDisplay.innerText = 'hello world';
           })
         } else {
-          resultsDisplay.innerText = 'Invalid inputs';
+          resultsDisplay.innerText = 'Invalid Inputs';
+          resultPanel.classList.remove('panel-default');
+          resultPanel.classList.add('panel-danger');
         }
         debugger;
       }
 
       reader.readAsText(file);
+    } else {
+      console.log('Cancelled file select');
     }
-    // debugger;
   })
 }
