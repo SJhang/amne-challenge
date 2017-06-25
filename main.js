@@ -3,6 +3,31 @@ window.onload = () => {
   const resultsDisplay = document.querySelector('.results');
   const resultPanel = resultsDisplay.parentNode;
 
+  const getFixedWindow = (windowSize, targetSizeWindow, salesPriceList) => {
+    const totalWindowList = [];
+    for (var i = 0; i < targetSizeWindow; i++) {
+      totalWindowList.push(salesPriceList.slice(i, i + windowSize));
+    }
+    return totalWindowList;
+  };
+
+  const subrangeNumber = (targetSizeWindow) => {
+    let subrangeResult = 0;
+    for (var i = 0; i < targetSizeWindow.length; i++) {
+      if (targetSizeWindow[i] < targetSizeWindow[i + 1]) {
+        subrangeResult++;
+      } else if (targetSizeWindow[i] > targetSizeWindow[i + 1]) {
+        subrangeResult--;
+      }
+    }
+
+    let isAscending = targetSizeWindow.every((item, idx, arr) => {
+      return arr[idx + 1] === undefined ? item : item < arr[idx + 1]
+    });
+    if (isAscending) subrangeResult++;
+    return subrangeResult;
+  };
+
   inputFile.addEventListener('change', e => {
     const file = inputFile.files[0];
     const fileTypeRegex = /text.*/;
@@ -13,6 +38,7 @@ window.onload = () => {
       // that can be used in DOM format.
       let reader = new FileReader();
 
+      // create a display element for input file
       const inputValues = document.createElement('div');
       inputValues.setAttribute('class', 'panel-footer inputValues');
       if (inputFile.nextElementSibling) {
@@ -20,34 +46,31 @@ window.onload = () => {
       };
       inputFile.insertAdjacentElement('afterend', inputValues);
 
-
+      // once loading ends
       reader.onloadend = e => {
         resultsDisplay.innerText = '';
         inputValues.innerText = e.target.result;
-        const firstLine = e.target.result.split('\n')[0].split(' ');
-        const secondLine = e.target.result.split('\n')[1];
+        const firstLineInput = e.target.result.split('\n')[0].split(' ');
+        const secondLineInput = e.target.result.split('\n')[1].split(' ');
 
-        let daysOfHomeSalePrice = firstLine[0];
-        let fixedWindowSize = firstLine[1];
+        let daysOfHomeSalePrice = parseInt(firstLineInput[0]);
+        let fixedWindowSize = parseInt(firstLineInput[1]);
         let windows = daysOfHomeSalePrice - fixedWindowSize + 1;
 
-        const fixedWindows = secondLine.split(' ');
-
-        if (daysOfHomeSalePrice <= 20000 && fixedWindowSize <= daysOfHomeSalePrice) {
+        const fixedWindows = getFixedWindow(fixedWindowSize, windows, secondLineInput);
+        if (daysOfHomeSalePrice <= 200000 && fixedWindowSize <= daysOfHomeSalePrice) {
           resultPanel.classList.remove('panel-default');
           resultPanel.classList.add('panel-success');
 
           fixedWindows.forEach(item => {
-            resultsDisplay.innerText = 'hello world';
-          })
+            resultsDisplay.innerText += `${subrangeNumber(item)} \n`;
+          });
         } else {
           resultsDisplay.innerText = 'Invalid Inputs';
           resultPanel.classList.remove('panel-default');
           resultPanel.classList.add('panel-danger');
         }
-        debugger;
       }
-
       reader.readAsText(file);
     } else {
       console.log('Cancelled file select');
