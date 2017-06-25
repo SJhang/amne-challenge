@@ -58,7 +58,8 @@ window.onload = () => {
         let windows = daysOfHomeSalePrice - fixedWindowSize + 1;
 
         const fixedWindows = getFixedWindow(fixedWindowSize, windows, secondLineInput);
-        if (daysOfHomeSalePrice <= 200000 && fixedWindowSize <= daysOfHomeSalePrice) {
+        if (daysOfHomeSalePrice >= 1 && daysOfHomeSalePrice <= 200000
+          && fixedWindowSize <= daysOfHomeSalePrice && fixedWindowSize >= 1) {
           resultPanel.classList.remove('panel-default');
           resultPanel.classList.add('panel-success');
 
